@@ -15,14 +15,11 @@ for THING in ${THINGS_LIST}; do
         do        
         STATUS=$(aws iot list-job-executions-for-job --job-id "$ID" --query 'executionSummaries[0].jobExecutionSummary.status' --output text)
 
-            if [ "$STATUS" = "CANCELED" ]; then
-            # if [ "$STATUS" = "SUCCEEDED" ]; then
-                echo "${THING} : ${ID} : SUCCEEDED"
-                # echo "${THING} : ${ID} : ${STATUS}"
+            if [ "$STATUS" = "SUCCEEDED" ]; then
+                echo "${THING} : ${ID} : ${STATUS}"
                 (( COMPLETE_JOBS++ ))
                 break
-            elif [[ "$STATUS" == "FAILED" || "$STATUS" == "REJECTED" || "$STATUS" == "SUCCEEDED" || "$STATUS" == "REMOVED" || "$STATUS" == "TIMED OUT" ]]; then
-            # elif [[ "$STATUS" == "FAILED" || "$STATUS" == "REJECTED" || "$STATUS" == "CANCELED" || "$STATUS" == "REMOVED" || "$STATUS" == "TIMED OUT" ]]; then
+            elif [[ "$STATUS" == "FAILED" || "$STATUS" == "REJECTED" || "$STATUS" == "CANCELED" || "$STATUS" == "REMOVED" || "$STATUS" == "TIMED OUT" ]]; then
                 echo -e "${THING} : ${ID} : \033[0;31m${STATUS}\033[0m                   "
                 break
 
@@ -31,7 +28,7 @@ for THING in ${THINGS_LIST}; do
                 break
 
             else
-                for (( i=5; i>0; i-- )); do # wait for 10 minutes
+                for (( i=600; i>0; i-- )); do # wait for 10 minutes
                     tput el; echo "First try failed for $ID next try in : ${i} sec"
                     tput cuu 1
                     sleep 1

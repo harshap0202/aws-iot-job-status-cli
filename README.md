@@ -22,4 +22,3 @@ Objective of this task was to create a script that would find the job execution 
 **Expected Output**
 
 ![alt text](images/output.png)
-
